@@ -42,22 +42,22 @@ train_keras:
     data/test.csv --model-name model.onnx
   deps:
   - path: ../src/kerasLSTM.py
-    md5: 2b6710313cb9e684b1825a9a130fbab5
+    md5: 179fe1fa151b239fcf2dcdc8bfdbf8ec
   - path: data/test.csv
     md5: 565289d019ff4421df32e72d84e0cfd5
   - path: data/train.csv
     md5: 5e270587b6bf391aec867e041db808ac
   params:
     params.yaml:
-      train_keras.batch_size: 64
-      train_keras.embed_size: 256
+      train_keras.batch_size: 32
+      train_keras.embed_size: 128
       train_keras.epochs: 1
-      train_keras.max_features: 1000
+      train_keras.max_features: 2000
       train_keras.max_len: 200
   outs:
   - path: metrics/metrics.json
-    md5: c98bb3098cfafb116cc926b38eec9fae
+    md5: 3a4502337a8e2df99e632d73477f73ee
   - path: metrics/prediction.csv
-    md5: 324eab0314c9307ebdb7992700c5a7ab
+    md5: 28bbbb75f002b1fd4f680a34842b3c3f
   - path: model/model.onnx
-    md5: 0cd0e045052e831dc7378c1e8c132f28
+    md5: 15a2abd646413f119b345e979defea54

@@ -3,8 +3,8 @@ split_data:
   random_state: 42
 
 train_keras:
-  batch_size: 64
+  batch_size: 32
   epochs: 1
-  max_features: 1000
+  max_features: 2000
   max_len: 200
-  embed_size: 256
+  embed_size: 128
