@@ -13,7 +13,6 @@ import click
 @click.option("--zip-filename", default="raw_data.zip", help="name of the zipped dataset downloaded from source (url)")
 def load_raw_data(url, path, filename, zip_filename):
     with mlflow.start_run(run_name="Download Data") as mlrun:
-        mlflow.set_tag("Start Time", datetime.datetime.now())
         
         # create directory if not exists
         if not os.path.exists(path):

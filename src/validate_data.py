@@ -15,7 +15,6 @@ import os
 @click.option("--validated-data-csv", default="data/validated_data.csv", help="path of validated output csv file")
 def validate_data(raw_data_csv, validated_data_csv):
     with mlflow.start_run(run_name="Validate Data") as active_run:
-        mlflow.set_tag("Start Time", datetime.datetime.now())
 
         # Read Data from given CSV file
         print('Read Data from given CSV file')

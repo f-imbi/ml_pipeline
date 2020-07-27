@@ -1,0 +1,63 @@
+download_raw_data:
+  cmd: python ../src/download_raw_data.py --url https://cloud.beuth-hochschule.de/index.php/s/atJrn3bPWayqEQ6/download
+    --path data --filename raw_data.csv --zip-filename raw_data.zip
+  deps:
+  - path: ../src/download_raw_data.py
+    md5: 915e96c365b6535216ae092de7859312
+  outs:
+  - path: data/raw_data.csv
+    md5: 791e42335500c447273a7dc85f58239e
+  - path: data/raw_data.zip
+    md5: 4e3917d09590b0267e9a199f62d65f2c
+validate_data:
+  cmd: python ../src/validate_data.py --raw-data-csv data/raw_data.csv --validated-data-csv
+    data/validated_data.csv
+  deps:
+  - path: ../src/validate_data.py
+    md5: 8b18c1045d8152ee2253d88982f41629
+  - path: data/raw_data.csv
+    md5: 791e42335500c447273a7dc85f58239e
+  outs:
+  - path: data/validated_data.csv
+    md5: 2252a849269160870e126ca09a30fc65
+split_data:
+  cmd: python ../src/split_data.py --validated-data-csv data/validated_data.csv --train-csv
+    data/train.csv --test-csv data/test.csv
+  deps:
+  - path: ../src/split_data.py
+    md5: ee5bd12fdfcea2d712fa333c5c6416c9
+  - path: data/validated_data.csv
+    md5: 2252a849269160870e126ca09a30fc65
+  params:
+    params.yaml:
+      split_data.random_state: 42
+      split_data.test_size: 0.2
+  outs:
+  - path: data/test.csv
+    md5: 565289d019ff4421df32e72d84e0cfd5
+  - path: data/train.csv
+    md5: 5e270587b6bf391aec867e041db808ac
+train_keras:
+  cmd: python ../src/kerasLSTM.py --train-data-csv data/train.csv --test-data-csv
+    data/test.csv --model-name model.onnx
+  deps:
+  - path: ../src/kerasLSTM.py
+    md5: 2b6710313cb9e684b1825a9a130fbab5
+  - path: data/test.csv
+    md5: 565289d019ff4421df32e72d84e0cfd5
+  - path: data/train.csv
+    md5: 5e270587b6bf391aec867e041db808ac
+  params:
+    params.yaml:
+      train_keras.batch_size: 64
+      train_keras.embed_size: 256
+      train_keras.epochs: 1
+      train_keras.max_features: 1000
+      train_keras.max_len: 200
+  outs:
+  - path: metrics/metrics.json
+    md5: c98bb3098cfafb116cc926b38eec9fae
+  - path: metrics/prediction.csv
+    md5: 324eab0314c9307ebdb7992700c5a7ab
+  - path: model/model.onnx
+    md5: 0cd0e045052e831dc7378c1e8c132f28

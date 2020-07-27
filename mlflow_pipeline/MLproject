@@ -1,6 +1,6 @@
 name: ml_pipeline
 
-conda_env: conda.yml
+conda_env: conda.yaml
 
 entry_points:
   download_data:
@@ -8,13 +8,14 @@ entry_points:
       url: {type: string, default: "https://cloud.beuth-hochschule.de/index.php/s/atJrn3bPWayqEQ6/download"}
       path: {type: string, default: "data"}
       filename: {type: string, default: "raw_data.csv"}
-    command: "python download_raw_data.py --url {url} --path {path} --filename {filename}"
+      zip_filename: {type: string, default: "raw_data.zip"}
+    command: "python ../src/download_raw_data.py --url {url} --path {path} --filename {filename} --zip-filename {zip_filename}"
 
   validate_data:
     parameters:
       raw_data_csv: {type: string, default: "data/raw_data.csv"}
       validated_data_csv: {type: string, default: "data/validated_data.csv"}
-    command: "python validate_data.py --raw-data-csv {raw_data_csv} --validated-data-csv {validated_data_csv}"
+    command: "python ../src/validate_data.py --raw-data-csv {raw_data_csv} --validated-data-csv {validated_data_csv}"
 
   split_data:
     parameters:
@@ -23,7 +24,7 @@ entry_points:
       random_state: {type: int, default: 42}
       train_csv: {type: string, default: "data/train.csv"}
       test_csv: {type: string, default: "data/test.csv"}
-    command: "python split_data.py --validated-data-csv {validated_data_csv} --test-size {test_size} --random-state {random_state} --train-csv {train_csv} --test-csv {test_csv}"
+    command: "python ../src/split_data.py --validated-data-csv {validated_data_csv} --test-size {test_size} --random-state {random_state} --train-csv {train_csv} --test-csv {test_csv}"
 
   train_keras:
     parameters:
@@ -36,7 +37,7 @@ entry_points:
       embed_size: {type: int, default: 128}
       model_name: {type: string, default: "model.onnx"}
       model_path: {type: string, default: "model"}
-    command: "python kerasLSTM.py --train-data-csv {train_data_csv} --test-data-csv {test_data_csv}  --batch-size {batch_size}  --epochs {epochs}  --max-features {max_features}  --max-len {max_len}  --embed-size {embed_size}  --model-name {model_name}  --model-path {model_path}"
+    command: "python ../src/kerasLSTM.py --train-data-csv {train_data_csv} --test-data-csv {test_data_csv}  --batch-size {batch_size}  --epochs {epochs}  --max-features {max_features}  --max-len {max_len}  --embed-size {embed_size}  --model-name {model_name}  --model-path {model_path}"
 
   main:
-    command: "python main.py"
+    command: "mlflow run . -e download_data && mlflow run . -e validate_data && mlflow run . -e split_data && mlflow run . -e train_keras"

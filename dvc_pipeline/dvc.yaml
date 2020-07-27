@@ -1,0 +1,47 @@
+stages:
+  download_raw_data:
+    cmd: python ../src/download_raw_data.py --url https://cloud.beuth-hochschule.de/index.php/s/atJrn3bPWayqEQ6/download
+      --path data --filename raw_data.csv --zip-filename raw_data.zip
+    deps:
+    - ../src/download_raw_data.py
+    outs:
+    - data/raw_data.csv
+    - data/raw_data.zip
+  validate_data:
+    cmd: python ../src/validate_data.py --raw-data-csv data/raw_data.csv --validated-data-csv
+      data/validated_data.csv
+    deps:
+    - ../src/validate_data.py
+    - data/raw_data.csv
+    outs:
+    - data/validated_data.csv
+  split_data:
+    cmd: python ../src/split_data.py --validated-data-csv data/validated_data.csv
+      --train-csv data/train.csv --test-csv data/test.csv
+    deps:
+    - ../src/split_data.py
+    - data/validated_data.csv
+    params:
+    - split_data.random_state
+    - split_data.test_size
+    outs:
+    - data/test.csv
+    - data/train.csv
+  train_keras:
+    cmd: python ../src/kerasLSTM.py --train-data-csv data/train.csv --test-data-csv
+      data/test.csv --model-name model.onnx
+    deps:
+    - ../src/kerasLSTM.py
+    - data/test.csv
+    - data/train.csv
+    params:
+    - train_keras.batch_size
+    - train_keras.embed_size
+    - train_keras.epochs
+    - train_keras.max_features
+    - train_keras.max_len
+    outs:
+    - metrics/prediction.csv
+    - model/model.onnx
+    metrics:
+    - metrics/metrics.json

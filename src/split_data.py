@@ -2,6 +2,7 @@ import pandas as pd
 import datetime
 import mlflow
 import click
+import yaml
 from sklearn import model_selection
 from os import path
 
@@ -16,7 +17,12 @@ from os import path
 @click.option("--test-csv", default="data/test.csv", help="path of output test csv file")
 def split_data(validated_data_csv, test_size, random_state, shuffle, train_csv, test_csv):
     with mlflow.start_run(run_name="Split Data") as mlrun:
-        mlflow.set_tag("Start Time", datetime.datetime.now())
+
+        # if params.yaml file exists, import params from it
+        if path.isfile("params.yaml"):
+            params = yaml.safe_load(open("params.yaml"))['split_data']
+            test_size = params['test_size']
+            random_state = params['random_state']
 
         # read Data from given CSV file
         print('Read Data from given CSV file')
