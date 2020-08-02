@@ -1,5 +1,5 @@
 download_raw_data:
-  cmd: python ../src/download_raw_data.py --url https://cloud.beuth-hochschule.de/index.php/s/atJrn3bPWayqEQ6/download
+  cmd: python ../src/download_raw_data.py --url https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download
     --path data --filename raw_data.csv --zip-filename raw_data.zip
   deps:
   - path: ../src/download_raw_data.py
@@ -14,7 +14,7 @@ validate_data:
     data/validated_data.csv
   deps:
   - path: ../src/validate_data.py
-    md5: 8b18c1045d8152ee2253d88982f41629
+    md5: 86e3558f48dd30b051c8a485b96dc50d
   - path: data/raw_data.csv
     md5: 791e42335500c447273a7dc85f58239e
   outs:

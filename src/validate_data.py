@@ -16,6 +16,7 @@ import os
 def validate_data(raw_data_csv, validated_data_csv):
     with mlflow.start_run(run_name="Validate Data") as active_run:
 
+
         # Read Data from given CSV file
         print('Read Data from given CSV file')
         raw_data = pd.read_csv(raw_data_csv)

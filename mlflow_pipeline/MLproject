@@ -5,39 +5,47 @@ conda_env: conda.yaml
 entry_points:
   download_data:
     parameters:
-      url: {type: string, default: "https://cloud.beuth-hochschule.de/index.php/s/atJrn3bPWayqEQ6/download"}
-      path: {type: string, default: "data"}
-      filename: {type: string, default: "raw_data.csv"}
-      zip_filename: {type: string, default: "raw_data.zip"}
-    command: "python ../src/download_raw_data.py --url {url} --path {path} --filename {filename} --zip-filename {zip_filename}"
+      url: {type: string, default: "https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download"}
+    command: "python ../src/download_raw_data.py --url {url}"
 
   validate_data:
     parameters:
-      raw_data_csv: {type: string, default: "data/raw_data.csv"}
-      validated_data_csv: {type: string, default: "data/validated_data.csv"}
-    command: "python ../src/validate_data.py --raw-data-csv {raw_data_csv} --validated-data-csv {validated_data_csv}"
+      raw_data_csv: path
+    command: "python ../src/validate_data.py --raw-data-csv {raw_data_csv}"
 
   split_data:
     parameters:
-      validated_data_csv: {type: string, default: "data/validated_data.csv"}
+      validated_data_csv: path
       test_size: {type: float, default: 0.2}
       random_state: {type: int, default: 42}
-      train_csv: {type: string, default: "data/train.csv"}
-      test_csv: {type: string, default: "data/test.csv"}
-    command: "python ../src/split_data.py --validated-data-csv {validated_data_csv} --test-size {test_size} --random-state {random_state} --train-csv {train_csv} --test-csv {test_csv}"
+    command: "python ../src/split_data.py --validated-data-csv {validated_data_csv} \
+    --test-size {test_size} --random-state {random_state}"
 
   train_keras:
     parameters:
-      train_data_csv: {type: string, default: "data/train.csv"}
-      test_data_csv: {type: string, default: "data/test.csv"}
+      train_data_csv: path
+      test_data_csv: path
       batch_size: {type: int, default: 32}
       epochs: {type: int, default: 1}
       max_features: {type: int, default: 2000}
       max_len: {type: int, default: 200}
       embed_size: {type: int, default: 128}
-      model_name: {type: string, default: "model.onnx"}
-      model_path: {type: string, default: "model"}
-    command: "python ../src/kerasLSTM.py --train-data-csv {train_data_csv} --test-data-csv {test_data_csv}  --batch-size {batch_size}  --epochs {epochs}  --max-features {max_features}  --max-len {max_len}  --embed-size {embed_size}  --model-name {model_name}  --model-path {model_path}"
+    command: "python ../src/kerasLSTM.py --train-data-csv {train_data_csv} \
+    --test-data-csv {test_data_csv}  --batch-size {batch_size}  --epochs {epochs}  \
+    --max-features {max_features}  --max-len {max_len}  --embed-size {embed_size}"
 
   main:
-    command: "mlflow run . -e download_data && mlflow run . -e validate_data && mlflow run . -e split_data && mlflow run . -e train_keras"
+    parameters:
+      url: {type: string, default: "https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download"}
+      test_size: {type: float, default: 0.3}
+      random_state: {type: int, default: 42}
+      batch_size: {type: int, default: 32}
+      epochs: {type: int, default: 1}
+      max_features: {type: int, default: 2000}
+      max_len: {type: int, default: 200}
+      embed_size: {type: int, default: 128}
+    command: "python ../src/main.py --test-size {test_size} --random-state {random_state} \
+    --batch-size {batch_size}  --epochs {epochs} --max-features {max_features} \
+    --max-len {max_len}  --embed-size {embed_size}"
+
+    #command: "mlflow run . -e download_data && mlflow run . -e validate_data && mlflow run . -e split_data && mlflow run . -e train_keras"

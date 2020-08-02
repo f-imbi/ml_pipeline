@@ -1,6 +1,6 @@
 stages:
   download_raw_data:
-    cmd: python ../src/download_raw_data.py --url https://cloud.beuth-hochschule.de/index.php/s/atJrn3bPWayqEQ6/download
+    cmd: python ../src/download_raw_data.py --url https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download
       --path data --filename raw_data.csv --zip-filename raw_data.zip
     deps:
     - ../src/download_raw_data.py

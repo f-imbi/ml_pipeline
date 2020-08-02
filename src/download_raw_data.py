@@ -7,7 +7,7 @@ import click
 
 
 @click.command(help="Downloads a ZIP packed data set, extraxts it and saves it as an mlflow artifact")
-@click.option("--url", default="https://cloud.beuth-hochschule.de/index.php/s/atJrn3bPWayqEQ6/download")
+@click.option("--url", default="https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download")
 @click.option("--path", default="data", help="Path where to store the dataset")
 @click.option("--filename", default="raw_data.csv", help="name given to the downloaded and extracted dataset")
 @click.option("--zip-filename", default="raw_data.zip", help="name of the zipped dataset downloaded from source (url)")
