@@ -18,21 +18,30 @@ from sklearn import metrics
 @click.command(help="Description...")
 @click.option("--train-data-csv", default="data/train.csv", help="path of input train csv file")
 @click.option("--test-data-csv", default="data/test.csv", help="path of input test csv file")
-@click.option("--batch-size", default=64)  # default 32
+@click.option("--batch-size", default=32)  # default 32
 @click.option("--epochs", default=1)  # default 2
 @click.option("--max-features", default=2000)  # default 2000
 @click.option("--max-len", default=200, help="max length of words of a comment - longer ones get trimmed")
-@click.option("--embed-size", default=256, help="define the size of the vector space")  # default = 128
+@click.option("--embed-size", default=128, help="define the size of the vector space")  # default = 128
 @click.option("--model-name", default="model.onnx", help="name of the exported model")
 @click.option("--model-path", default="model", help="path where to safe the exported model")
-def train_model(train_data_csv, test_data_csv, batch_size, epochs, max_features, max_len, embed_size, model_name,
+def call_train_model(train_data_csv, test_data_csv, batch_size, epochs, max_features, max_len, embed_size, model_name, model_path):
+    train_model(train_data_csv, test_data_csv, batch_size, epochs, max_features, max_len, embed_size, model_name, model_path)
+
+
+def train_model(train_data, test_data, batch_size, epochs, max_features, max_len, embed_size, model_name,
                 model_path):
     with mlflow.start_run(run_name="Train Model") as mlrun:
+        mlflow.set_tag("Start Time", datetime.datetime.now())
 
-        # read Data from given CSV files
-        print('Read Data from given CSV files ...')
-        train = pd.read_csv(train_data_csv)
-        test = pd.read_csv(test_data_csv)
+        # read Data from given DataFrame or CSV file
+        print('Read Data from given DataFrame or CSV file ...')
+        if isinstance(train_data, str) & isinstance(test_data, str):
+            train = pd.read_csv(train_data)
+            test = pd.read_csv(test_data)
+        if isinstance(train_data, pd.DataFrame) & isinstance(test_data, pd.DataFrame):
+            train = train_data
+            test = test_data
 
         # if params.yaml file exists, import params from it
         if os.path.isfile("params.yaml"):
@@ -77,11 +86,12 @@ def train_model(train_data_csv, test_data_csv, batch_size, epochs, max_features,
         model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1)
 
         # evaluation of the model
-        evaluation(model, test, X_test, y_test, list_classes)
+        model_metrics = evaluation(model, test, X_test, y_test, list_classes)
 
         # convert model to serialized onnx model and save it
-        save_model(model, model_path, model_name)
+        onnx_model = save_model(model, model_path, model_name)
         mlflow.set_tag("End Time", datetime.datetime.now())
+        return onnx_model, model_metrics
 
 
 def build_model(max_len, max_features, embed_size):
@@ -182,6 +192,7 @@ def evaluation(model, test, X_test, y_test, categories):
     with open('metrics/metrics.json', 'w') as fd:
         json.dump(metrics_dump, fd, indent=2)
     mlflow.log_artifact('metrics/metrics.json', 'metrics')
+    return metrics_dump
 
 
 def save_model(model, model_path, model_name):
@@ -197,7 +208,8 @@ def save_model(model, model_path, model_name):
     print("saving ONNX model to ", model_path)
     keras2onnx.save_model(onnx_model, model_path)
     mlflow.onnx.log_model(onnx_model, model_path)
+    return onnx_model
 
 
 if __name__ == '__main__':
-    train_model()
+    call_train_model()

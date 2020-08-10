@@ -13,9 +13,13 @@ import os
          "The file is then saved as an mlflow artifact called 'validated-data-csv'")
 @click.option("--raw-data-csv", default="data/raw_data.csv", help="path of input csv file")
 @click.option("--validated-data-csv", default="data/validated_data.csv", help="path of validated output csv file")
+def call_validate_data(raw_data_csv, validated_data_csv):
+    validate_data(raw_data_csv, validated_data_csv)
+
+
 def validate_data(raw_data_csv, validated_data_csv):
     with mlflow.start_run(run_name="Validate Data") as active_run:
-
+        mlflow.set_tag("Start Time", datetime.datetime.now())
 
         # Read Data from given CSV file
         print('Read Data from given CSV file')
@@ -43,13 +47,15 @@ def validate_data(raw_data_csv, validated_data_csv):
         print("Schema has been successfully validated")
 
         # log metrics to MLflow Tracking
-        logMetrics(raw_data)
+        validated_data_df = raw_data
+        logMetrics(validated_data_df)
 
         # Save modified & validated data to csv file and save as mlflow artifact
         validated_data = os.path.join(validated_data_csv)
-        raw_data.to_csv(path_or_buf=validated_data, index=False)
+        validated_data_df.to_csv(path_or_buf=validated_data, index=False)
         mlflow.log_artifact(validated_data, "validated_data-csv-dir")
         mlflow.set_tag("End Time", datetime.datetime.now())
+        return validated_data_df
 
 
 def defSchema():
@@ -92,4 +98,4 @@ def logMetrics(raw_data):
 
 
 if __name__ == '__main__':
-    validate_data()
+    call_validate_data()

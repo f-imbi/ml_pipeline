@@ -15,8 +15,13 @@ from os import path
 @click.option("--shuffle", default=True)
 @click.option("--train-csv", default="data/train.csv", help="path of output train csv file")
 @click.option("--test-csv", default="data/test.csv", help="path of output test csv file")
-def split_data(validated_data_csv, test_size, random_state, shuffle, train_csv, test_csv):
+def call_split_data(validated_data_csv, test_size, random_state, shuffle, train_csv, test_csv):
+    split_data(validated_data_csv, test_size, random_state, shuffle, train_csv, test_csv)
+
+
+def split_data(validated_data, test_size, random_state, shuffle, train_csv, test_csv):
     with mlflow.start_run(run_name="Split Data") as mlrun:
+        mlflow.set_tag("Start Time", datetime.datetime.now())
 
         # if params.yaml file exists, import params from it
         if path.isfile("params.yaml"):
@@ -24,9 +29,12 @@ def split_data(validated_data_csv, test_size, random_state, shuffle, train_csv, 
             test_size = params['test_size']
             random_state = params['random_state']
 
-        # read Data from given CSV file
-        print('Read Data from given CSV file')
-        df = pd.read_csv(validated_data_csv)
+        # read Data from given DataFrame or CSV file
+        print('Read Data from given DataFrame or CSV file')
+        if isinstance(validated_data, str):
+            df = pd.read_csv(validated_data)
+        if isinstance(validated_data, pd.DataFrame):
+            df = validated_data
 
         # split Dataframe to train and test with given parameters
         print('Split given CSV file with test_size=%s , random_state=%s and shuffle=%s'
@@ -55,7 +63,8 @@ def split_data(validated_data_csv, test_size, random_state, shuffle, train_csv, 
         mlflow.log_artifact(train_path, "train-csv-dir")
         mlflow.log_artifact(test_path, "test-csv-dir")
         mlflow.set_tag("End Time", datetime.datetime.now())
+        return train, test
 
 
 if __name__ == '__main__':
-    split_data()
+    call_split_data()
