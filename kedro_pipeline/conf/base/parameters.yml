@@ -1,0 +1,12 @@
+# Step 1 Params
+url: "https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download"
+# Step 3 Params
+test_size: 0.2
+random_state: 42
+# Step 4 Params
+batch_size: 32
+epochs: 1
+max_features: 2000
+max_len: 200
+embed_size: 128
+
