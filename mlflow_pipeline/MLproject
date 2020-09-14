@@ -5,7 +5,7 @@ conda_env: conda.yaml
 entry_points:
   download_data:
     parameters:
-      url: {type: string, default: "https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download"}
+      url: {type: string, default: "https://cloud.beuth-hochschule.de/index.php/s/MBfP8MnRY395J2F/download"}
     command: "python ../src/download_raw_data.py --url {url}"
 
   validate_data:
@@ -36,7 +36,7 @@ entry_points:
 
   main:
     parameters:
-      url: {type: string, default: "https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download"}
+      url: {type: string, default: "https://cloud.beuth-hochschule.de/index.php/s/MBfP8MnRY395J2F/download"}
       test_size: {type: float, default: 0.3}
       random_state: {type: int, default: 42}
       batch_size: {type: int, default: 32}
@@ -44,7 +44,7 @@ entry_points:
       max_features: {type: int, default: 2000}
       max_len: {type: int, default: 200}
       embed_size: {type: int, default: 128}
-    command: "python ../src/main.py --test-size {test_size} --random-state {random_state} \
+    command: "python ../src/main.py --url {url} --test-size {test_size} --random-state {random_state} \
     --batch-size {batch_size}  --epochs {epochs} --max-features {max_features} \
     --max-len {max_len}  --embed-size {embed_size}"
 

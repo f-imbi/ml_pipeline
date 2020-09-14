@@ -11,7 +11,7 @@ class ML_Pipeline(FlowSpec):
     """
     A flow where Metaflow runs the steps of a ML Pipeline
     """
-    url = Parameter('url', default='https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download')
+    url = Parameter('url', default='https://cloud.beuth-hochschule.de/index.php/s/MBfP8MnRY395J2F/download')
     # Params for train_test_split
     test_size = Parameter('test_size', default=0.2)
     random_state = Parameter('random_state', default=42)

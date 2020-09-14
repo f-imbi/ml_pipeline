@@ -52,7 +52,6 @@ def _get_or_run(entrypoint, parameters, git_commit, use_cache=True):
     print("Launching new run for entrypoint=%s and parameters=%s" % (entrypoint, parameters))
     submitted_run = mlflow.run(".", entrypoint, parameters=parameters)
     return mlflow.tracking.MlflowClient().get_run(submitted_run.run_id)
-    return mlflow.tracking.MlflowClient().get_run(submitted_run.run_id)
 
 @click.command()
 @click.option("--url", default="https://cloud.beuth-hochschule.de/index.php/s/P3g95HY68taz78g/download")

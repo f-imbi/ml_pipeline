@@ -24,8 +24,8 @@ def load_raw_data(url, path, filename, zip_filename):
             os.makedirs(path)
 
         # download file if not exists
-        if not os.path.exists(os.path.join(path, zip_filename)):
-            zip_filepath = os.path.join(path, zip_filename)
+        zip_filepath = os.path.join(path, zip_filename)
+        if not os.path.exists(zip_filepath):
             print("Downloading %s to %s" % (url, zip_filepath))
             mlflow.set_tag("Start Time Download", datetime.datetime.now())
             r = requests.get(url, stream=True)
@@ -36,8 +36,8 @@ def load_raw_data(url, path, filename, zip_filename):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
 
-            # extract zip file
-            print("Extracting %s into %s" % (zip_filepath, path))
+            # extract, then delete zip file
+            print("Extracting %s into %s" % (zip_filename, path))
             with zipfile.ZipFile(zip_filepath, 'r') as zip_ref:
                 zip_ref.extractall(path)
 
